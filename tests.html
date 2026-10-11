@@ -1,0 +1,123 @@
+!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validator Tests – Campus Life Planner</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .pass {
+            color: #15803d;
+        }
+
+        .fail {
+            color: #b91c1c;
+            font-weight: 700;
+        }
+
+        #summary {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>Validator Tests</h1>
+        <p id="summary" role="status"></p>
+        <ul id="results"></ul>
+    </main>
+
+    <script type="module">
+        import {
+            validateTitle,
+            validateDuration,
+            validateDate,
+            validateTag,
+            validateTask
+        } from './scripts/validators.js';
+
+        const results = document.getElementById('results');
+        let passed = 0;
+        let failed = 0;
+
+        
+        function assert(name, condition) {
+            const li = document.createElement('li');
+            if (condition) {
+                li.textContent = 'PASS: ' + name;
+                li.className = 'pass';
+                passed++;
+            } else {
+                li.textContent = 'FAIL: ' + name;
+                li.className = 'fail';
+                failed++;
+            }
+            results.appendChild(li);
+        }
+
+        
+        const valid = msg => msg === '';
+        const invalid = msg => msg !== '';
+
+        //Title
+        assert('title: accepts normal text', valid(validateTitle('Read chapter 4')));
+        assert('title: accepts a single letter', valid(validateTitle('A')));
+        assert('title: rejects empty', invalid(validateTitle('')));
+        assert('title: rejects leading space', invalid(validateTitle(' Read')));
+        assert('title: rejects trailing space', invalid(validateTitle('Read ')));
+        assert('title: rejects double spaces', invalid(validateTitle('Read  notes')));
+        assert('title: rejects duplicate word', invalid(validateTitle('Read the the notes')));
+        assert('title: duplicate word ignores case', invalid(validateTitle('The the end')));
+        assert('title: names the repeated word', validateTitle('the the').includes('"the"'));
+        assert('title: allows "the there" (not a duplicate)', valid(validateTitle('the there')));
+
+        //Duration
+        assert('duration: accepts 0', valid(validateDuration('0')));
+        assert('duration: accepts 90', valid(validateDuration('90')));
+        assert('duration: accepts 45.5', valid(validateDuration('45.5')));
+        assert('duration: accepts 600', valid(validateDuration('600')));
+        assert('duration: rejects 007', invalid(validateDuration('007')));
+        assert('duration: rejects 1.234', invalid(validateDuration('1.234')));
+        assert('duration: rejects -5', invalid(validateDuration('-5')));
+        assert('duration: rejects letters', invalid(validateDuration('ten')));
+
+        // Date
+        assert('date: accepts 2026-10-14', valid(validateDate('2026-10-14')));
+        assert('date: accepts leap day 2028-02-29', valid(validateDate('2028-02-29')));
+        assert('date: rejects 2026-02-29 (not a leap year)', invalid(validateDate('2026-02-29')));
+        assert('date: rejects 2026-02-31', invalid(validateDate('2026-02-31')));
+        assert('date: rejects 2026-04-31', invalid(validateDate('2026-04-31')));
+        assert('date: rejects month 13', invalid(validateDate('2026-13-01')));
+        assert('date: rejects 14/10/2026', invalid(validateDate('14/10/2026')));
+
+        //  Tag 
+        assert('tag: accepts Study', valid(validateTag('Study')));
+        assert('tag: accepts Group-Work', valid(validateTag('Group-Work')));
+        assert('tag: accepts Club Meeting', valid(validateTag('Club Meeting')));
+        assert('tag: rejects Study1', invalid(validateTag('Study1')));
+        assert('tag: rejects Group--Work', invalid(validateTag('Group--Work')));
+        assert('tag: rejects trailing space', invalid(validateTag('Club ')));
+
+        // Whole task
+        const good = { title: 'Read chapter 4', dueDate: '2026-10-14', duration: '90', tag: 'Study' };
+        const bad = { title: ' Read', dueDate: '2026-02-31', duration: '90', tag: 'Study' };
+        assert('task: valid task has no errors', Object.keys(validateTask(good)).length === 0);
+        assert('task: reports exactly the 2 bad fields', Object.keys(validateTask(bad)).length === 2);
+        assert('task: flags dueDate', 'dueDate' in validateTask(bad));
+
+        //Summary
+        document.getElementById('summary').textContent =
+            `${passed} passed, ${failed} failed (${passed + failed} total)`;
+    </script>
+</body>
+
+</html>
