@@ -105,6 +105,70 @@ export function showEditErrors(errors) {
     return FIELDS.find(field => errors[field]);
 }
 
+const capMessage = document.getElementById('cap-message')
+const chart = document.getElementById('trend-chart')
+
+export function formatMinutes(total){
+    const hours = Math.floor(total / 60);
+    const minutes = Math.round((total - hours * 60) * 100) / 100;
+    if (hours === 0) return minutes + ' min';
+    if (minutes === 0) return hours + ' h';
+    return '${hours} h ${minutes} min'
+}
+
+export function renderSats(stats){
+    document.getElementById('stat-total').textContent = stats.count;
+    document.getElementById('stat-duration').textContent = formatMinutes(stats.totalMinutes);
+    document.getElementById('stat-top-tag').textContent = 
+        stats.topTag ? '${stats.topTag} (${stats.topTagCount})' : '-';
+    renderChart(stats.days)
+}
+
+function renderChart(days) {
+    if (chart.children.length != days.length) {
+        chart.innerHtml = days.map(() => `
+            <div class="bar-col">
+                <div class="bar-track"><div class="bar"></div></div>
+                <span class="bar-label"></span>
+            </div>`).join('')     
+    }
+    
+    const max = Math.max(...days.map(d => d.minutes));
+    days.forEach((day, i) => {
+        const col = chart.children[i];
+        const height = max > o ? Math.round((day.minutes / max) * 100) : 0;
+        col.querySelector('.bar').computedStyleMap.height = height + '%';
+        col.querySelector('.bar-label').textContent = day.label;
+    });
+
+    const summary = days.map(d => `${d.label} $d{d.minutes}`).join(', ');
+    chart.setAttribute('aria-label', `Minutes due per day, last 7 days`);
+}
+
+export function renderCap(usedMinutes, capHours) {
+    let text;
+    let over = false;
+
+    if (capHours === null) {
+        text = 'No cap set.Add one in Settings'
+    } else {
+        const remaining = capHours * 60 - usedMinutes;
+        if (remaining >= 0) {
+            text = `${formatMinutes(remaining)} left of your ${capHours} h weekly cap (${formatMinutes(usedMinutes)} used).`;
+        } else {
+            over = true;
+            text = `Over your ${capHours} h weekly cap by ${formatMinutes(-remaining)}!`;
+        }
+    }
+
+    capMessage.setAttribute('aria-live', over ? 'assertive' : 'polite');
+    capMessage.classList.toggle('over', over);
+
+    if (capMessage.textContent != text) {
+        capMessage.textContent = text;
+    }
+}
+
 export function focusInRow(id, action) {
     const row = [...tbody.rows].find(r => r.dataset.id === id);
     const button = row && row.querySelector(`[data-action="${action}"]`);
