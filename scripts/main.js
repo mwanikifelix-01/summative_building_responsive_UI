@@ -1,4 +1,13 @@
 import { validateTask } from './validators.js';
+import {
+  addTask, updateTask, deleteTask,
+  getTasks, getSortedTasks, setSort, getSort
+} from './state.js';
+import { parseSearch, filterTasks } from './search.js';
+import {
+  renderTable, updateSortHeaders,
+  readEditRow, showEditErrors, focusInRow
+} from './ui.js';
 
 const form = document.getElementById('task-form');
 const status = document.getElementById('status');
