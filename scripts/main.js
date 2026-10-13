@@ -198,5 +198,22 @@ tbody.addEventListener('keydown', (event) => {
   }
 });
  
+
+capInput.addEventListener('change', () => {
+    const value  = capInput.value.trim();
+    if (value === '') {
+        weeklyCap = null;
+    } else if (!PATTERNS.duration.test(value) || Number(value) === 0) {
+        capError.textContent = 'Enter hours as a number above 0';
+        capInput.setAttribute('aria-invalid', 'true');
+        return;
+    } else {
+        weeklyCap = Number(value);
+    }
+
+    capError.textContent = '';
+    capInput.removeAttribute('aria-invalid');
+    render();
+})
  
 render();
