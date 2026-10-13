@@ -67,6 +67,53 @@ export function getSort() {
     return { key: sortKey, dir: sortDir };
 }
 
+function toDateKey(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2,'0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return '${y}-${m}-${d}';
+}
+
+export function computeStats(list, today = new Date()) {
+    const totalminutes = list.reduce((sum, t) => sum + t.duration, 0);
+
+    const tagCounts = {};
+    for (const t of list) {
+        tagCounts[t.tag] = (tagCounts[t.tag] || 0) + 1;
+    }
+
+    let topTag = null;
+    for (const tag of Objects.keys(tagCounts).sort()){
+        if (topTag === null || tagCounts[tag] > tagCounts[topTag]){
+            topTag = tag;
+        }
+    }
+
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+        days.push({
+            key: toDateKey(date),
+            label: date.toLocaleDateString(undefined, { weekday : 'short'}),
+            minutes: 0
+        });
+    }
+
+    for (const t of list) {
+        const day = days.find(d => d.key === t.dueDate);
+        if (day) day.minutes += t.duration;
+    }
+    const weekMinutes = days.reduce((sum, d) => sum = d.minutes, 0);
+
+    return{
+        count: list.length,
+        totalMinutes,
+        topTag,
+        topTagCount: topTag ? tagcounts[topTag] : 0,
+        days,
+        weekMinutes
+    };
+}
 
 export function getSortedTasks() {
     const copy = [...tasks];
