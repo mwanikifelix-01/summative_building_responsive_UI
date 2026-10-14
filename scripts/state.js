@@ -103,7 +103,7 @@ export function computeStats(list, today = new Date()) {
         const day = days.find(d => d.key === t.dueDate);
         if (day) day.minutes += t.duration;
     }
-    const weekMinutes = days.reduce((sum, d) => sum = d.minutes, 0);
+    const weekMinutes = days.reduce((sum, d) => sum + d.minutes, 0);
 
     return{
         count: list.length,
