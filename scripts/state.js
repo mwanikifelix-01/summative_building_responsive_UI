@@ -71,11 +71,11 @@ function toDateKey(date) {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2,'0');
     const d = String(date.getDate()).padStart(2, '0');
-    return '${y}-${m}-${d}';
+    return `${y}-${m}-${d}`;
 }
 
 export function computeStats(list, today = new Date()) {
-    const totalminutes = list.reduce((sum, t) => sum + t.duration, 0);
+    const totalMinutes = list.reduce((sum, t) => sum + t.duration, 0);
 
     const tagCounts = {};
     for (const t of list) {
@@ -83,7 +83,7 @@ export function computeStats(list, today = new Date()) {
     }
 
     let topTag = null;
-    for (const tag of Objects.keys(tagCounts).sort()){
+    for (const tag of Object.keys(tagCounts).sort()){
         if (topTag === null || tagCounts[tag] > tagCounts[topTag]){
             topTag = tag;
         }
@@ -109,7 +109,7 @@ export function computeStats(list, today = new Date()) {
         count: list.length,
         totalMinutes,
         topTag,
-        topTagCount: topTag ? tagcounts[topTag] : 0,
+        topTagCount: topTag ? tagCounts[topTag] : 0,
         days,
         weekMinutes
     };

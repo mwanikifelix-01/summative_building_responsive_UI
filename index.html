@@ -169,7 +169,8 @@
 
                 <div class="field">
                     <label for="import-file">Import tasks (JSON)</label>
-                    <input type="file" id="import-file" accept="application/json,.json">
+                    <input type="file" id="import-file" accept="application/json,.json" aria-describedby="import-error">
+                    <p id="import-error" class="error" aria-live="polite"></p>
                 </div>
 
                 <div class="form-actions">

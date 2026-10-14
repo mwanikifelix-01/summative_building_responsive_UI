@@ -12,14 +12,14 @@ export function formatDuration(minutes, unit = 'minutes') {
     return minutes + ' min';
 }
 
-function viewRow(task, regex) {
+function viewRow(task, regex, unit) {
     const id = escapeHtml(task.id);
     const title = escapeHtml(task.title);
     return `
     <tr data-id="${id}">
       <td data-label="Title">${highlight(task.title, regex)}</td>
       <td data-label="Due date">${highlight(task.dueDate, regex)}</td>
-      <td data-label="Duration">${formatDuration(task.duration)}</td>
+      <td data-label="Duration">${formatDuration(task.duration, unit)}</td>
       <td data-label="Tag">${highlight(task.tag, regex)}</td>
       <td data-label="Actions">
         <button type="button" class="btn" data-action="edit" aria-label="Edit ${title}">Edit</button>
@@ -56,9 +56,9 @@ function editRow(task) {
     </tr>`;
 }
 
-export function renderTable(tasks, regex, editingId, total) {
+export function renderTable(tasks, regex, editingId, total, unit = 'minutes') {
     tbody.innerHTML = tasks
-        .map(task => (task.id === editingId ? editRow(task) : viewRow(task, regex)))
+        .map(task => (task.id === editingId ? editRow(task) : viewRow(task, regex, unit)))
         .join('');
 
     if (total === 0) {
@@ -113,20 +113,20 @@ export function formatMinutes(total){
     const minutes = Math.round((total - hours * 60) * 100) / 100;
     if (hours === 0) return minutes + ' min';
     if (minutes === 0) return hours + ' h';
-    return '${hours} h ${minutes} min'
+    return `${hours} h ${minutes} min`
 }
 
-export function renderSats(stats){
+export function renderStats(stats){
     document.getElementById('stat-total').textContent = stats.count;
     document.getElementById('stat-duration').textContent = formatMinutes(stats.totalMinutes);
     document.getElementById('stat-top-tag').textContent = 
-        stats.topTag ? '${stats.topTag} (${stats.topTagCount})' : '-';
+        stats.topTag ? `${stats.topTag} (${stats.topTagCount})` : '-';
     renderChart(stats.days)
 }
 
 function renderChart(days) {
     if (chart.children.length != days.length) {
-        chart.innerHtml = days.map(() => `
+        chart.innerHTML = days.map(() => `
             <div class="bar-col">
                 <div class="bar-track"><div class="bar"></div></div>
                 <span class="bar-label"></span>
@@ -136,13 +136,13 @@ function renderChart(days) {
     const max = Math.max(...days.map(d => d.minutes));
     days.forEach((day, i) => {
         const col = chart.children[i];
-        const height = max > o ? Math.round((day.minutes / max) * 100) : 0;
-        col.querySelector('.bar').computedStyleMap.height = height + '%';
+        const height = max > 0 ? Math.round((day.minutes / max) * 100) : 0;
+        col.querySelector('.bar').style.height = height + '%';
         col.querySelector('.bar-label').textContent = day.label;
     });
 
-    const summary = days.map(d => `${d.label} $d{d.minutes}`).join(', ');
-    chart.setAttribute('aria-label', `Minutes due per day, last 7 days`);
+    const summary = days.map(d => `${d.label} ${d.minutes}`).join(', ');
+    chart.setAttribute('aria-label', `Minutes due per day, last 7 days: ${summary}.`);
 }
 
 export function renderCap(usedMinutes, capHours) {
@@ -150,7 +150,7 @@ export function renderCap(usedMinutes, capHours) {
     let over = false;
 
     if (capHours === null) {
-        text = 'No cap set.Add one in Settings'
+        text = 'No cap set. Add one in Settings'
     } else {
         const remaining = capHours * 60 - usedMinutes;
         if (remaining >= 0) {

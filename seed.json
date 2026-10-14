@@ -1,0 +1,112 @@
+
+[
+  {
+    "id": "task_0001",
+    "title": "Read chapter 4 for Data Structures",
+    "dueDate": "2026-10-14",
+    "duration": 90,
+    "tag": "Study",
+    "createdAt": "2026-10-08T07:30:00.000Z",
+    "updatedAt": "2026-10-08T07:30:00.000Z"
+  },
+  {
+    "id": "task_0002",
+    "title": "Group project meeting at 14:30",
+    "dueDate": "2026-10-13",
+    "duration": 60,
+    "tag": "Group-Work",
+    "createdAt": "2026-10-08T09:00:00.000Z",
+    "updatedAt": "2026-10-10T16:45:00.000Z"
+  },
+  {
+    "id": "task_0003",
+    "title": "Calculus midterm exam",
+    "dueDate": "2026-10-20",
+    "duration": 120,
+    "tag": "Exam",
+    "createdAt": "2026-10-01T12:00:00.000Z",
+    "updatedAt": "2026-10-01T12:00:00.000Z"
+  },
+  {
+    "id": "task_0004",
+    "title": "Submit lab report before 23:59",
+    "dueDate": "2026-10-12",
+    "duration": 45.5,
+    "tag": "Assignment",
+    "createdAt": "2026-10-05T18:20:00.000Z",
+    "updatedAt": "2026-10-11T21:05:00.000Z"
+  },
+  {
+    "id": "task_0005",
+    "title": "Robotics club build session",
+    "dueDate": "2026-10-10",
+    "duration": 75,
+    "tag": "Club Meeting",
+    "createdAt": "2026-10-03T10:00:00.000Z",
+    "updatedAt": "2026-10-03T10:00:00.000Z"
+  },
+  {
+    "id": "task_0006",
+    "title": "Quick call home",
+    "dueDate": "2026-10-11",
+    "duration": 0,
+    "tag": "Personal",
+    "createdAt": "2026-10-09T19:00:00.000Z",
+    "updatedAt": "2026-10-09T19:00:00.000Z"
+  },
+  {
+    "id": "task_0007",
+    "title": "Capstone project final sprint",
+    "dueDate": "2026-11-30",
+    "duration": 600,
+    "tag": "Assignment",
+    "createdAt": "2026-09-15T08:00:00.000Z",
+    "updatedAt": "2026-10-02T14:30:00.000Z"
+  },
+  {
+    "id": "task_0008",
+    "title": "Leap day revision marathon",
+    "dueDate": "2028-02-29",
+    "duration": 30,
+    "tag": "Study",
+    "createdAt": "2026-10-06T11:15:00.000Z",
+    "updatedAt": "2026-10-06T11:15:00.000Z"
+  },
+  {
+    "id": "task_0009",
+    "title": "Plan goals for the new year",
+    "dueDate": "2026-12-31",
+    "duration": 15.25,
+    "tag": "Personal",
+    "createdAt": "2026-10-07T20:00:00.000Z",
+    "updatedAt": "2026-10-07T20:00:00.000Z"
+  },
+  {
+    "id": "task_0010",
+    "title": "Review \"Intro to <HTML> & CSS\" notes",
+    "dueDate": "2026-10-09",
+    "duration": 50,
+    "tag": "Study",
+    "createdAt": "2026-10-04T13:40:00.000Z",
+    "updatedAt": "2026-10-04T13:40:00.000Z"
+  },
+  {
+    "id": "task_0011",
+    "title": "Prof's office hours at 09:05",
+    "dueDate": "2026-10-15",
+    "duration": 20,
+    "tag": "Class",
+    "createdAt": "2026-10-10T08:00:00.000Z",
+    "updatedAt": "2026-10-10T08:00:00.000Z"
+  },
+  {
+    "id": "task_0012",
+    "title": "Lecture: the theory of algorithms",
+    "dueDate": "2026-10-08",
+    "duration": 110,
+    "tag": "Class",
+    "createdAt": "2026-10-01T06:00:00.000Z",
+    "updatedAt": "2026-10-01T06:00:00.000Z"
+  }
+]
+

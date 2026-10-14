@@ -1,13 +1,17 @@
-import { validateTask } from './validators.js';
+import { validateTask, PATTERNS } from './validators.js';
 import {
-  addTask, updateTask, deleteTask,
-  getTasks, getSortedTasks, setSort, getSort
+  addTask, updateTask, deleteTask, setTasks,
+  getTasks, getSortedTasks, setSort, getSort, computeStats
 } from './state.js';
 import { parseSearch, filterTasks } from './search.js';
 import {
   renderTable, updateSortHeaders,
-  readEditRow, showEditErrors, focusInRow
+  readEditRow, showEditErrors, focusInRow, renderStats, renderCap
 } from './ui.js';
+import {
+  loadTasks, saveTasks, loadSettings, saveSettings,
+  clearAll, exportJSON, parseImport
+} from './storage.js';
 
 const form = document.getElementById('task-form');
 const status = document.getElementById('status');
@@ -15,9 +19,14 @@ const searchInput = document.getElementById('search-input');
 const searchError = document.getElementById('search-error');
 const caseToggle = document.getElementById('case-toggle');
 const tbody = document.getElementById('task-body');
+const capInput = document.getElementById('cap-input');
+const capError = document.getElementById('cap-error');
+const importInput = document.getElementById('import-file');
+const importError = document.getElementById('import-error');
 const FIELDS = ['title', 'dueDate', 'duration', 'tag'];
 
 let editingId = null;
+let settings = loadSettings();
 
 function readForm() {
     return {
@@ -44,6 +53,18 @@ function announce(message) {
     status.textContent = message;
 }
 
+function persist() {
+  if (!saveTasks(getTasks())) {
+    announce('Warning: your changes could not be saved in this browser.');
+  }
+}
+ 
+function showSettings() {
+  document.getElementById(settings.unit === 'hours' ? 'unit-hr' : 'unit-min').checked = true;
+  capInput.value = settings.cap === null ? '' : settings.cap;
+}
+
+
 function render() {
   const search = parseSearch(searchInput.value, caseToggle.checked);
  
@@ -55,8 +76,13 @@ function render() {
   }
  
   const visible = filterTasks(getSortedTasks(), search);
-  renderTable(visible, search.regex, editingId, getTasks().length);
+  renderTable(visible, search.regex, editingId, getTasks().length, settings.unit);
   updateSortHeaders(getSort());
+
+  const stats = computeStats(getTasks());
+  renderStats(stats);
+  renderCap(stats.weekMinutes, settings.cap);
+
   return visible.length;
 }
 
@@ -78,6 +104,7 @@ form.addEventListener('submit', (event) => {
     }
 
     const task = addTask(data);
+    persist();
     render();
     announce(`Task "${task.title}" added.`);
     form.reset();
@@ -149,6 +176,7 @@ function saveEdit(id) {
   }
  
   updateTask(id, data);
+  persist();
   editingId = null;
   render();
   announce(`Task "${data.title}" updated.`);
@@ -166,6 +194,7 @@ function removeTask(id) {
   }
  
   deleteTask(id);
+  persist();
   if (editingId === id) editingId = null;
   render();
   announce(`Task "${task.title}" deleted.`);
@@ -198,22 +227,82 @@ tbody.addEventListener('keydown', (event) => {
   }
 });
  
+for (const radio of document.querySelectorAll('input[name="unit"]')) {
+  radio.addEventListener('change', () => {
+    settings.unit = radio.value;          // 'minutes' or 'hours'
+    saveSettings(settings);
+    render();
+    announce(`Durations now shown in ${radio.value}.`);
+  });
+}
 
 capInput.addEventListener('change', () => {
     const value  = capInput.value.trim();
     if (value === '') {
-        weeklyCap = null;
+        settings.cap = null;
     } else if (!PATTERNS.duration.test(value) || Number(value) === 0) {
         capError.textContent = 'Enter hours as a number above 0';
         capInput.setAttribute('aria-invalid', 'true');
         return;
     } else {
-        weeklyCap = Number(value);
+        settings.cap = Number(value);
     }
 
     capError.textContent = '';
     capInput.removeAttribute('aria-invalid');
+    saveSettings(settings);
     render();
-})
+});
+
+document.getElementById('export-btn').addEventListener('click', () => {
+  exportJSON(getTasks());
+  announce(`Exported ${getTasks().length} tasks.`);
+});
  
+importInput.addEventListener('change', async () => {
+  const file = importInput.files[0];
+  if (!file) return;
+ 
+  const text = await file.text();
+  const { tasks, error } = parseImport(text);
+  importInput.value = '';   // lets the same file be chosen again later
+ 
+  if (error) {
+    importError.textContent = 'Import failed. ' + error;
+    importInput.setAttribute('aria-invalid', 'true');
+    return;
+  }
+ 
+  importError.textContent = '';
+  importInput.removeAttribute('aria-invalid');
+ 
+  const current = getTasks().length;
+  if (current > 0 &&
+      !window.confirm(`Replace your ${current} tasks with ${tasks.length} imported tasks?`)) {
+    return;
+  }
+ 
+  setTasks(tasks);
+  persist();
+  editingId = null;
+  render();
+  announce(`Imported ${tasks.length} tasks.`);
+});
+ 
+document.getElementById('clear-btn').addEventListener('click', () => {
+  if (!window.confirm('Delete ALL tasks and settings? This cannot be undone.')) {
+    return;
+  }
+ 
+  clearAll();
+  setTasks([]);
+  settings = loadSettings();   // back to the defaults
+  showSettings();
+  editingId = null;
+  render();
+  announce('All data cleared.');
+});
+
+setTasks(loadTasks());
+showSettings();
 render();
