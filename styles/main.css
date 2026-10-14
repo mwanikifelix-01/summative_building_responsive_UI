@@ -1,14 +1,14 @@
-/* ===== Campus Life Planner: mobile-first styles ===== */
+
 
 /* ---------- Tokens ---------- */
 :root {
   --bg: #f5f7fb;
   --surface: #ffffff;
   --text: #1b1f2a;
-  --muted: #4a5468;          /* 7.4:1 on white */
-  --primary: #1d4ed8;        /* 6.7:1 on white */
+  --muted: #4a5468;         
+  --primary: #1d4ed8;        
   --primary-text: #ffffff;
-  --danger: #b91c1c;         /* 6.5:1 on white */
+  --danger: #b91c1c;         
   --success: #15803d;
   --border: #cfd6e4;
   --focus: #f59e0b;
@@ -322,7 +322,6 @@ table {
 }
 
 thead {
-  /* Hidden visually on mobile; still read by screen readers */
   position: absolute;
   width: 1px;
   height: 1px;
@@ -345,7 +344,6 @@ tbody td {
   padding: 0.25rem 0;
 }
 
-/* JS adds data-label="Title" etc. to each td */
 tbody td::before {
   content: attr(data-label);
   font-weight: 600;
@@ -455,7 +453,6 @@ mark {
     margin: 0 auto;
   }
 
-  /* Left column: dashboard + form; right column: tasks */
   #dashboard,
   #task-form-section {
     flex: 1 1 calc(40% - var(--gap));
