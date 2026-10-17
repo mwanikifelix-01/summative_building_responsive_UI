@@ -3,8 +3,8 @@
 An accessible, responsive planner for students to track tasks and events, see how much time they are committing each week, and find anything quickly with regex search. Built with **vanilla HTML, CSS and JavaScript** (no frameworks).
 
 - **Theme:** Campus Life Planner
-- **Live site (GitHub Pages):** https://mwanikifelix-01.github.io/summative_building_responsive_UI
-- **Demo video:** https://YOUR-VIDEO-LINK
+- **Live site (GitHub Pages):** https://github.com/mwanikifelix-01/summative_building_responsive_UI.git
+- **Demo video:** https://youtu.be/vXzLqrN8Ofw
 - **Author:** Felix Mwaniki · [GitHub](https://github.com/mwanikifelix-01)
 
 ---
