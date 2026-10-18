@@ -4,7 +4,7 @@ An accessible, responsive planner for students to track tasks and events, see ho
 
 - **Theme:** Campus Life Planner
 - **Live site (GitHub Pages):** https://github.com/mwanikifelix-01/summative_building_responsive_UI.git
-- **Demo video:** https://youtu.be/vXzLqrN8Ofw
+- **Demo video:**mhttps://youtu.be/FBe1HaO4GNM
 - **Author:** Felix Mwaniki · [GitHub](https://github.com/mwanikifelix-01)
 
 ---
